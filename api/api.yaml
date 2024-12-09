@@ -1,0 +1,349 @@
+openapi: 3.1.0
+info:
+  title: City service API
+  description: lab work for SOA
+  version: 1.0.0
+servers:
+  - url: 'https://localhost:25000/api/v1/city'
+tags:
+  - name: City
+    description: CRUD операции для объекта City
+  - name: Extension
+    description: Дополнительные операции
+paths:
+  /cities:
+    get:
+      tags:
+        - City
+      summary: Get list of cities
+      description: Get list of cities
+      parameters:
+        - $ref: "models.yaml#/components/parameters/limit"
+        - $ref: "models.yaml#/components/parameters/sort"
+        - $ref: "models.yaml#/components/parameters/offset"
+        - $ref: "models.yaml#/components/parameters/filter"
+      responses:
+        "200":
+          content:
+            application/xml:
+              schema:
+                $ref: "models.yaml#/components/responses/page"
+                xml:
+                  name: page
+        "400":
+          content:
+            application/xml:
+              schema:
+                $ref: "models.yaml#/components/responses/badRequestError"
+              example:
+                message: Validation error
+                fields:
+                  - limit
+        "429":
+          content:
+            application/xml:
+              schema:
+                $ref: "models.yaml#/components/responses/toManyRequestsError"
+        default:
+          content:
+            application/xml:
+              schema:
+                $ref: "models.yaml#/components/responses/defaultError"
+    post:
+      tags:
+        - City
+      summary: Создать город
+      description: Создаёт новый объект City
+      requestBody:
+        content:
+          application/xml:
+            schema:
+              $ref: "models.yaml#/components/schemas/City"
+      responses:
+        "201":
+          content:
+            application/xml:
+              schema:
+                $ref: "models.yaml#/components/schemas/City"
+        "400":
+          content:
+            application/xml:
+              schema:
+                $ref: "models.yaml#/components/responses/badRequestError"
+              example:
+                message: Validation error
+                fields:
+                  - limit
+        "429":
+          content:
+            application/xml:
+              schema:
+                $ref: "models.yaml#/components/responses/toManyRequestsError"
+        default:
+          content:
+            application/xml:
+              schema:
+                $ref: "models.yaml#/components/responses/defaultError"
+  /cities/{id}:
+    get:
+      tags:
+        - City
+      summary: Получить город по id
+      description: Получить объект City по id
+      parameters:
+        - $ref: "models.yaml#/components/parameters/id"
+      responses:
+        "200":
+          content:
+            application/xml:
+              schema:
+                $ref: "models.yaml#/components/schemas/City"
+        "400":
+          content:
+            application/xml:
+              schema:
+                $ref: "models.yaml#/components/responses/badRequestError"
+              example:
+                message: Validation error
+                fields:
+                  - id
+        "404":
+          content:
+            application/xml:
+              schema:
+                $ref: "models.yaml#/components/responses/notFoundError"
+              example:
+                message: City not found
+        "429":
+          content:
+            application/xml:
+              schema:
+                $ref: "models.yaml#/components/responses/toManyRequestsError"
+        default:
+          content:
+            application/xml:
+              schema:
+                $ref: "models.yaml#/components/responses/defaultError"
+    delete:
+      tags:
+        - City
+      summary: Удалить город по id
+      description: Удалить объект City по id
+      parameters:
+        - $ref: "models.yaml#/components/parameters/id"
+      responses:
+        "204":
+          description: Successful deletion
+        "400":
+          content:
+            application/xml:
+              schema:
+                $ref: "models.yaml#/components/responses/badRequestError"
+              example:
+                message: Validation error
+                fields:
+                  - id
+        "404":
+          content:
+            application/xml:
+              schema:
+                $ref: "models.yaml#/components/responses/notFoundError"
+              example:
+                message: City not found
+        "429":
+          content:
+            application/xml:
+              schema:
+                $ref: "models.yaml#/components/responses/toManyRequestsError"
+        default:
+          content:
+            application/xml:
+              schema:
+                $ref: "models.yaml#/components/responses/defaultError"
+    put:
+      tags:
+        - City
+      summary: Обновить город по id
+      description: Обновить объект City по id
+      parameters:
+        - $ref: "models.yaml#/components/parameters/id"
+      requestBody:
+        content:
+          application/xml:
+            schema:
+              $ref: "models.yaml#/components/schemas/City"
+      responses:
+        "200":
+          content:
+            application/xml:
+              schema:
+                $ref: "models.yaml#/components/schemas/City"
+        "400":
+          content:
+            application/xml:
+              schema:
+                $ref: "models.yaml#/components/responses/badRequestError"
+              example:
+                message: Validation error
+                fields:
+                  - id
+        "404":
+          content:
+            application/xml:
+              schema:
+                $ref: "models.yaml#/components/responses/notFoundError"
+              example:
+                message: City not found
+        "429":
+          content:
+            application/xml:
+              schema:
+                $ref: "models.yaml#/components/responses/toManyRequestsError"
+        default:
+          content:
+            application/xml:
+              schema:
+                $ref: "models.yaml#/components/responses/defaultError"
+  /cities/smallest-id:
+    get:
+      tags:
+        - Extension
+      summary: Вернуть один объект с минимальным id.
+      description: Вернуть один (любой) объект, значение поля id которого является минимальным.
+      responses:
+        "200":
+          description: Объект получен
+          content:
+            application/xml:
+              schema:
+                $ref: "models.yaml#/components/schemas/City"
+        "404":
+          content:
+            application/xml:
+              schema:
+                $ref: "models.yaml#/components/responses/notFoundError"
+              example:
+                message: There are no cities
+        "429":
+          content:
+            application/xml:
+              schema:
+                $ref: "models.yaml#/components/responses/toManyRequestsError"
+        default:
+          content:
+            application/xml:
+              schema:
+                $ref: "models.yaml#/components/responses/defaultError"
+  /cities/count:
+    get:
+      tags:
+        - Extension
+      summary: Вернуть количество объектов, значение поля government которых больше заданного.
+      description: Вернуть количество объектов, значение поля government которых больше заданного.
+      parameters:
+        - $ref: "models.yaml#/components/parameters/government"
+      responses:
+        "200":
+          content:
+            application/xml:
+              schema:
+                type: integer
+                xml:
+                  name: result
+              example: 5
+        "400":
+          content:
+            application/xml:
+              schema:
+                $ref: "models.yaml#/components/responses/badRequestError"
+              example:
+                message: Validation error
+                fields:
+                  - government
+        "429":
+          content:
+            application/xml:
+              schema:
+                $ref: "models.yaml#/components/responses/toManyRequestsError"
+        default:
+          content:
+            application/xml:
+              schema:
+                $ref: "models.yaml#/components/responses/defaultError"
+  /climate:
+    get:
+      tags:
+        - City
+      summary: enum климата
+      responses:
+        "200":
+          content:
+            application/xml:
+              schema:
+                type: array
+                items:
+                  type: string
+                xml:
+                  name: climate
+                example:
+                  - HUMIDSUBTROPICAL
+                  - MEDITERRANIAN
+                  - TUNDRA
+                  - DESERT
+        default:
+          content:
+            application/xml:
+              schema:
+                $ref: "models.yaml#/components/responses/defaultError"
+  /government:
+    get:
+      tags:
+        - City
+      summary: enum режима правления
+      responses:
+        "200":
+          content:
+            application/xml:
+              schema:
+                type: array
+                items:
+                  type: string
+                xml:
+                  name: government
+                example:
+                  - KLEPTOCRACY
+                  - PUPPET_STATE
+                  - TELLUROCRACY
+                  - THEOCRACY
+                  - ETHNOCRACY
+        default:
+          content:
+            application/xml:
+              schema:
+                $ref: "models.yaml#/components/responses/defaultError"
+  /standard-of-living:
+    get:
+      tags:
+        - City
+      summary: enum уровня жизни
+      responses:
+        "200":
+          content:
+            application/xml:
+              schema:
+                type: array
+                items:
+                  type: string
+                xml:
+                  name: standard-of-living
+                example:
+                  - VERY_HIGH
+                  - HIGH
+                  - LOW
+                  - ULTRA_LOW
+                  - NIGHTMARE
+        default:
+          content:
+            application/xml:
+              schema:
+                $ref: "models.yaml#/components/responses/defaultError"

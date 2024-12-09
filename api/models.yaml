@@ -1,0 +1,298 @@
+components:
+  schemas:
+    Coordinates:
+      type: object
+      required:
+        - x
+        - y
+      properties:
+        x:
+          type: integer
+          format: int64
+          nullable: false
+          example:
+            - 10
+        y:
+          type: number
+          format: double
+          nullable: false
+          minimum: -449
+          exclusiveMinimum: true
+          example:
+            - 25.5
+    Human:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          nullable: false
+          pattern: .*\S.*
+          example:
+            - Денис
+    Climate:
+      type: string
+      enum:
+        - HUMIDSUBTROPICAL
+        - MEDITERRANIAN
+        - TUNDRA
+        - DESERT
+    Government:
+      type: string
+      enum:
+        - KLEPTOCRACY
+        - PUPPET_STATE
+        - TELLUROCRACY
+        - THEOCRACY
+        - ETHNOCRACY
+    StandardOfLiving:
+      type: string
+      enum:
+        - VERY_HIGH
+        - HIGH
+        - LOW
+        - ULTRA_LOW
+        - NIGHTMARE
+    City:
+      type: object
+      required:
+        - id
+        - name
+        - coordinates
+        - creationDate
+        - area
+        - population
+        - metersAboveSeaLevel
+        - climate
+        - government
+        - standardOfLiving
+        - governor
+      properties:
+        id:
+          type: integer
+          nullable: false
+          description: ID
+          readOnly: true
+          example:
+            - 1
+        name:
+          type: string
+          nullable: false
+          pattern: .*\S.*
+          example:
+            - Пермь
+        coordinates:
+          nullable: false
+          $ref: "#/components/schemas/Coordinates"
+        creationDate:
+          type: string
+          format: date-time
+          nullable: false
+          readOnly: true
+          example:
+            - 2024-01-03T14:05:12Z
+        area:
+          type: number
+          format: float
+          nullable: false
+          minimum: 0
+          exclusiveMinimum: true
+          example:
+            - 100.001
+        population:
+          type: integer
+          nullable: false
+          minimum: 0
+          exclusiveMinimum: true
+          example:
+            - 100000
+        metersAboveSeaLevel:
+          type: number
+          format: int64
+          nullable: false
+          example:
+            - 1234
+        climate:
+          nullable: false
+          $ref: "#/components/schemas/Climate"
+        government:
+          nullable: true
+          $ref: "#/components/schemas/Government"
+        standardOfLiving:
+          nullable: false
+          $ref: "#/components/schemas/StandardOfLiving"
+        governor:
+          nullable: false
+          $ref: "#/components/schemas/Human"
+  parameters:
+    id:
+      in: path
+      name: id
+      required: true
+      schema:
+        type: integer
+        format: id
+      example: 1
+    government:
+      in: path
+      name: government
+      required: true
+      schema:
+        type: string
+      example: Денис
+    limit:
+      in: query
+      name: limit
+      required: false
+      schema:
+        type: integer
+      example: 10
+    sort:
+      in: query
+      name: sort
+      required: false
+      explode: true
+      schema:
+        type: array
+        items:
+          type: string
+          default: id
+          enum:
+            - id
+            - name
+            - coordinates.x
+            - coordinates.y
+            - creation_date
+            - area
+            - population
+            - meters_above_sea_level
+            - climate
+            - government
+            - standard_of_living
+            - governor
+            - -id
+            - -name
+            - -coordinates.x
+            - -coordinates.y
+            - -reation_date
+            - -area
+            - -population
+            - -meters_above_sea_level
+            - -climate
+            - -government
+            - -standard_of_living
+            - -governor
+    offset:
+      in: query
+      name: offset
+      required: false
+      schema:
+        type: integer
+      example: 2
+    filter:
+      in: query
+      name: filter
+      required: false
+      description: Массив полей, используемых для фильтрации. Каждый элемент должен содержать название поля и метод фильтрации в квадратных скобках (lte, lt, gte, gt, neq, eq, ~)
+      schema:
+        type: array
+        items:
+          type: string
+          example: id[eq]=1
+      style: deepObject
+      explode: true
+  responses:
+    page:
+      type: object
+      required:
+        - totalItems
+        - cities
+        - totalPages
+        - currentPage
+      properties:
+        totalItems:
+          type: integer
+          nullable: false
+          example:
+            - 10
+        cities:
+          type: array
+          nullable: false
+          items:
+            $ref: "#/components/schemas/City"
+        totalPages:
+          type: integer
+          nullable: false
+          example:
+            - 1
+        currentPage:
+          type: integer
+          nullable: false
+          example:
+            - 1
+    notFoundError:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          nullable: false
+          example:
+            - "City not found"
+    badRequestError:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          nullable: false
+          example:
+            - "Validation error"
+        errors:
+          type: array
+          nullable: true
+          items:
+            type: string
+        fields:
+          type: array
+          nullable: true
+          items:
+            type: string
+            example:
+              - "area"
+    toManyRequestsError:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          nullable: false
+          example:
+            - "Too Many Requests"
+    internalError:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          nullable: false
+          example:
+            - "The service being called is unavailable"
+    defaultError:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          nullable: false
+          example:
+            - "Unexpected error"
+
+
+

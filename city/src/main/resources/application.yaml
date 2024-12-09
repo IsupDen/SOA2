@@ -1,0 +1,17 @@
+spring:
+  mvc:
+    throw-exception-if-no-handler-found: true
+  web:
+    resources:
+      add-mappings: false
+  main:
+    lazy-initialization: true
+  datasource:
+    jndi-name: java:/PostgresDS
+  jpa:
+    hibernate:
+      ddl-auto: update
+    generate-ddl: true
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration
+

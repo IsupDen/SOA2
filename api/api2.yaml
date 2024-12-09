@@ -1,0 +1,114 @@
+openapi: 3.1.0
+info:
+  title: Extension service API
+  description: lab work for SOA
+  version: 1.0.0
+servers:
+  - url: 'https://localhost:25000/api/v1/extension'
+tags:
+  - name: Extension
+    description: Дополнительные операции
+paths:
+  /calculate/length/{id1}/{id2}:
+    get:
+      tags:
+        - Extension
+      summary: рассчитать длину маршрута из города с id=id1 в город с id=id2
+      description: √(|city1.x-city2.x|²+|city1.y-city2.y|²)
+      parameters:
+        - description: id1
+          in: path
+          name: id1
+          required: true
+          schema:
+            type: integer
+            format: id1
+          example: 1
+        - description: id2
+          in: path
+          name: id2
+          required: true
+          schema:
+            type: integer
+            format: id2
+          example: 2
+      responses:
+        "200":
+          content:
+            application/xml:
+              schema:
+                type: integer
+                format: float
+                xml:
+                  name: result
+              example: 100
+        "400":
+          content:
+            application/xml:
+              schema:
+                $ref: "models.yaml#/components/responses/badRequestError"
+              example:
+                message: Validation error
+                fields:
+                  - id1
+        "404":
+          content:
+            application/xml:
+              schema:
+                $ref: "models.yaml#/components/responses/notFoundError"
+              example:
+                message: City not found
+        "429":
+          content:
+            application/xml:
+              schema:
+                $ref: "models.yaml#/components/responses/toManyRequestsError"
+        "503":
+          content:
+            application/xml:
+              schema:
+                $ref: "models.yaml#/components/responses/internalError"
+        default:
+          content:
+            application/xml:
+              schema:
+                $ref: "models.yaml#/components/responses/defaultError"
+
+  /calculate/between-oldest-and-newest:
+    get:
+      tags:
+        - Extension
+      summary: рассчитать длину маршрута между городом, основанным раньше остальных, и городом, основанного позже остальных
+      description: √(|new.x-old.x|²+|new.y-old.y|²)
+      responses:
+        "200":
+          content:
+            application/xml:
+              schema:
+                type: integer
+                format: float
+                xml:
+                  name: result
+              example: 100
+        "404":
+          content:
+            application/xml:
+              schema:
+                $ref: "models.yaml#/components/responses/notFoundError"
+              example:
+                message: There are no cities
+        "429":
+          content:
+            application/xml:
+              schema:
+                $ref: "models.yaml#/components/responses/toManyRequestsError"
+        "503":
+          content:
+            application/xml:
+              schema:
+                $ref: "models.yaml#/components/responses/internalError"
+        default:
+          content:
+            application/xml:
+              schema:
+                $ref: "models.yaml#/components/responses/defaultError"

@@ -1,0 +1,44 @@
+plugins {
+  id 'java'
+  id 'war'
+  id("io.freefair.lombok") version "8.0.1"
+}
+
+group 'ru.isupden'
+version '1.0-SNAPSHOT'
+
+repositories {
+  mavenCentral()
+}
+
+ext {
+  junitVersion = '5.11.0-M2'
+}
+
+tasks.withType(JavaCompile) {
+  options.encoding = 'UTF-8'
+}
+
+dependencies {
+  implementation 'org.projectlombok:lombok:1.18.30'
+  providedCompile 'javax.ws.rs:javax.ws.rs-api:2.1.1'
+  providedCompile 'javax.servlet:javax.servlet-api:4.0.1'
+  providedCompile 'javax.xml.ws:jaxws-api:2.3.1'
+  providedCompile 'javax.activation:activation:1.1.1'
+  implementation 'org.glassfish.jersey.core:jersey-client:2.34'
+  compileOnly "org.projectlombok:lombok:1.18.30"
+  annotationProcessor "org.projectlombok:lombok:1.18.30"
+  testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
+  testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
+}
+
+
+
+java {
+  toolchain {
+    languageVersion = JavaLanguageVersion.of(17)
+  }
+}
+
+test {
+useJUnitPlatform()}
